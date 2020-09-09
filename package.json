@@ -1,0 +1,42 @@
+{
+  "name": "fiat-token-gas-relay",
+  "version": "0.0.1",
+  "repository": "git+https://github.com/petejkim/fiat-token-gas-relay.git",
+  "author": "petejkim",
+  "license": "MIT",
+  "scripts": {
+    "setup": "git config core.hooksPath .githooks",
+    "typecheck": "tsc -p . --noEmit",
+    "lint": "eslint --ext '.js,.ts' './**/*.{j,t}s'",
+    "fmt": "prettier --write './**/*.{js,ts,json,md}'",
+    "test": "jest",
+    "start": "ts-node -T src/index.ts",
+    "precommit": "yarn fmt && yarn typecheck && yarn lint"
+  },
+  "engines": {
+    "node": ">= 12.0.0"
+  },
+  "dependencies": {
+    "koa": "^2.13.0",
+    "koa-router": "^9.4.0"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.11.4",
+    "@types/koa-router": "^7.4.1",
+    "@typescript-eslint/eslint-plugin": "^4.1.0",
+    "@typescript-eslint/parser": "^4.1.0",
+    "eslint": "^7.8.1",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "jest": "^26.4.2",
+    "prettier": "^2.1.1",
+    "ts-jest": "^26.3.0",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.2"
+  }
+}
