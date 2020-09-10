@@ -28,8 +28,7 @@ CREATE INDEX index_authorizations_type ON authorizations (type);
 
 CREATE TABLE submissions (
   id serial PRIMARY KEY,
-  authorization_id int REFERENCES authorizations (id),
-  tx_nonce int,
+  authorization_id int REFERENCES authorizations (id) NOT NULL,
   tx_hash char(64),
   raw_tx text,
   error varchar(255),
@@ -38,7 +37,16 @@ CREATE TABLE submissions (
 );
 
 CREATE UNIQUE INDEX index_submissions_authorization_id ON submissions (authorization_id);
-CREATE UNIQUE INDEX index_submissions_tx_nonce ON submissions (tx_nonce);
 CREATE UNIQUE INDEX index_submissions_tx_hash ON submissions (tx_hash);
+CREATE UNIQUE INDEX index_submissions_confirmed_at ON submissions (confirmed_at);
+CREATE UNIQUE INDEX index_submissions_confirmed_at_and_raw_tx ON submissions (confirmed_at, raw_tx);
+
+CREATE TABLE tx_nonces (
+  nonce int PRIMARY KEY,
+  submission_id int REFERENCES submissions (id) NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE UNIQUE INDEX index_tx_nonces_submission_id ON tx_nonces (submission_id);
 
 COMMIT;

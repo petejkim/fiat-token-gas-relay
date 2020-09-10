@@ -30,13 +30,13 @@ export function createAuthorization(pool: Pool): Router.IMiddleware {
           auth.type,
           strip0x(auth.address1),
           strip0x(auth.address2),
-          strip0x(auth.value),
-          strip0x(auth.validAfter),
-          strip0x(auth.validBefore),
-          strip0x(auth.nonce),
-          strip0x(auth.v),
-          strip0x(auth.r),
-          strip0x(auth.s),
+          strip0x(auth.value).padStart(64, "0"),
+          strip0x(auth.valid_after).padStart(64, "0"),
+          strip0x(auth.valid_before).padStart(64, "0"),
+          strip0x(auth.nonce).padStart(64, "0"),
+          strip0x(auth.v).padStart(2, "0"),
+          strip0x(auth.r).padStart(64, "0"),
+          strip0x(auth.s).padStart(64, "0"),
         ]
       );
       id = result.rows[0].id;

@@ -4,6 +4,7 @@ import Router from "koa-router";
 import { Pool } from "pg";
 import { DATABASE_URL, PORT } from "./config";
 import { createAuthorization } from "./handlers/createAuthorization";
+import { showAuthorization } from "./handlers/showAuthorization";
 
 const app = new Koa();
 const router = new Router();
@@ -11,7 +12,7 @@ const pool = new Pool({ connectionString: DATABASE_URL });
 
 pool.on("error", (err, _client) => {
   console.error("pg pool error:", err);
-  process.exit(-1);
+  process.exit(1);
 });
 
 app.use(bodyParser({ enableTypes: ["json"] }));
@@ -22,6 +23,7 @@ router.get("/", async (ctx) => {
 });
 
 router.post("/authorizations", createAuthorization(pool));
+router.get("/authorizations/:id", showAuthorization(pool));
 
 app.use(router.routes()).use(router.allowedMethods());
 

@@ -40,8 +40,8 @@ $ yarn start
   "address1": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   "address2": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
   "value": "0x0000000000000000000000000000000000000000000000000000000000000001",
-  "validAfter": "0x0000000000000000000000000000000000000000000000000000000000000000",
-  "validBefore": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "valid_after": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "valid_before": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
   "nonce": "0x0000000000000000000000000000000000000000000000000000000000000000",
   "v": "0x1b",
   "r": "0x1111111111111111111111111111111111111111111111111111111111111111",
@@ -55,6 +55,49 @@ $ yarn start
 
 ```json
 { "status": "submitted_for_processing", "id": 1 }
+```
+
+### GET /authorizations/{id}
+
+#### Example Request
+
+`Content-Type: application/json`
+
+`200 OK`
+
+```json
+{
+  "id": 1,
+  "state": "pending"
+}
+```
+
+```json
+{
+  "id": 1,
+  "state": "submitted",
+  "tx_hash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+  "submitted_at": "2020-09-10T06:29:24.109Z"
+}
+```
+
+```json
+{
+  "id": 1,
+  "state": "confirmed",
+  "tx_hash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+  "submitted_at": "2020-09-10T06:29:24.109Z",
+  "confirmed_at": "2020-09-10T06:29:26.251Z"
+}
+```
+
+```json
+{
+  "id": 1,
+  "state": "failed",
+  "error": "invalid_signature",
+  "failed_at": "2020-09-10T06:29:24.109Z"
+}
 ```
 
 ## Missing Features

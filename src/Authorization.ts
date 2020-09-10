@@ -23,8 +23,8 @@ export interface Authorization {
   address1: string;
   address2: string;
   value: string;
-  validAfter: string;
-  validBefore: string;
+  valid_after: string;
+  valid_before: string;
   nonce: string;
   v: string;
   r: string;
@@ -37,12 +37,12 @@ export function isValidAuthorization(o: any): o is Authorization {
     isValidAuthorizationType(o.type) &&
     isHexString(o.address1, 40) &&
     isHexString(o.address2, 40) &&
-    isHexString(o.value, 64) &&
-    isHexString(o.validAfter, 64) &&
-    isHexString(o.validBefore, 64) &&
-    isHexString(o.nonce, 64) &&
-    isHexString(o.v, 2) &&
-    isHexString(o.r, 64) &&
-    isHexString(o.s, 64)
+    isHexString(o.value) &&
+    isHexString(o.valid_after) &&
+    isHexString(o.valid_before) &&
+    isHexString(o.nonce) &&
+    isHexString(o.v) &&
+    isHexString(o.r) &&
+    isHexString(o.s)
   );
 }
