@@ -16,6 +16,7 @@ $ cd fiat-token-gas-relay
 $ npm i -g yarn       # Install yarn if you don't already have it
 $ yarn install        # Install dependencies
 $ yarn setup          # Setup Git hooks
+$ cp .env{.example,}  # Duplicate .env file (Edit it if necessary)
 $ createdb gasrelay_development                   # Create DB
 $ psql -d gasrelay_development -f db/schema.sql   # Load DB Schema
 ```
