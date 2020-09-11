@@ -11,16 +11,21 @@
     "fmt": "prettier --write './**/*.{js,ts,json,md}'",
     "test": "jest",
     "start": "ts-node -T src/index.ts",
+    "start-worker": "ts-node -T src/worker",
     "precommit": "yarn fmt && yarn typecheck && yarn lint"
   },
   "engines": {
     "node": ">= 12.0.0"
   },
   "dependencies": {
+    "ethereumjs-tx": "^2.1.2",
+    "ethereumjs-util": "^7.0.4",
+    "isomorphic-unfetch": "^3.0.0",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^9.4.0",
-    "pg": "^8.3.3"
+    "pg": "^8.3.3",
+    "web3": "^1.2.11"
   },
   "devDependencies": {
     "@types/koa": "^2.11.4",
