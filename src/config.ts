@@ -20,6 +20,8 @@ export const NONCE_START = Number(env.NONCE_START) || 0;
 export const GAS_PRICE = Web3.utils.numberToHex(stripSep(env.GAS_PRICE!));
 export const GAS_LIMIT = Web3.utils.numberToHex(stripSep(env.GAS_LIMIT!));
 export const WORKER_POLL_INTERVAL = Number(env.WORKER_POLL_INTERVAL);
+export const RATE_LIMIT_DURATION = Number(env.RATE_LIMIT_DURATION);
+export const RATE_LIMIT_MAX_REQS = Number(env.RATE_LIMIT_MAX_REQS);
 
 function stripSep(str: string): string {
   return str.replace(/[\s_,]/g, "");

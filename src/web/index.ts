@@ -1,5 +1,6 @@
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
+import ratelimit from "koa-ratelimit";
 import Router from "koa-router";
 import { Pool } from "pg";
 import { DATABASE_URL, PORT } from "../config";
@@ -14,6 +15,17 @@ pool.on("error", (err, _client) => {
   console.error("pg pool error:", err);
   process.exit(1);
 });
+
+app.use(
+  ratelimit({
+    driver: "memory",
+    db: new Map(),
+    duration: 30000,
+    errorMessage: `{"error":"rate_limit_exceeded"}`,
+    id: (ctx) => ctx.ip,
+    max: 100,
+  })
+);
 
 app.use(bodyParser({ enableTypes: ["json"] }));
 

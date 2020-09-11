@@ -24,6 +24,7 @@
     "isomorphic-unfetch": "^3.0.0",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
+    "koa-ratelimit": "^4.2.1",
     "koa-router": "^9.4.0",
     "pg": "^8.3.3",
     "web3": "^1.2.11"
@@ -31,6 +32,7 @@
   "devDependencies": {
     "@types/koa": "^2.11.4",
     "@types/koa-bodyparser": "^4.3.0",
+    "@types/koa-ratelimit": "^4.2.1",
     "@types/koa-router": "^7.4.1",
     "@types/pg": "^7.14.4",
     "@typescript-eslint/eslint-plugin": "^4.1.0",
