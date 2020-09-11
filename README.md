@@ -106,15 +106,17 @@ $ yarn start
 This project does not include the following features that would be essential for
 production use.
 
-- Authorization types - only transfer authorization is implemented
-- Gas price estimation - this project uses a hard-coded gas price
-- Transaction replacement with higher gas price - this project does not submit a
-  replacement transaction with higher gas price when a transaction sits
-  unconfirmed for too long
-- Multiple submitter accounts - this project submits transactions from a single
+- Authorization types: Only transfer authorization is implemented
+- Gas price estimation: This project uses a hard-coded gas price. Use
+  ETHGasStation API or `eth_gasPrice` instead.
+- Transaction replacement: this project does not submit a replacement
+  transaction with higher gas price when a transaction sits unconfirmed for too
+  long
+- Multiple submitter accounts: this project submits transactions from a single
   account
+- Charging fees in FiatToken: Either use an intermediate contract or
+  `transferMultipleWithAuthorizations` in `FiatTokenUtil` contract.
 - Authorization Cancellation
-- Charging fees in FiatToken
 
 ---
 

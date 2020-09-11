@@ -2,7 +2,7 @@ import Koa from "koa";
 import bodyParser from "koa-bodyparser";
 import Router from "koa-router";
 import { Pool } from "pg";
-import { DATABASE_URL, PORT } from "./config";
+import { DATABASE_URL, PORT } from "../config";
 import { createAuthorization } from "./handlers/createAuthorization";
 import { showAuthorization } from "./handlers/showAuthorization";
 

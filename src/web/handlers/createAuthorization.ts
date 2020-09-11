@@ -1,12 +1,29 @@
 import Router from "koa-router";
 import { Pool } from "pg";
-import { AuthorizationType, isValidAuthorization } from "../Authorization";
-import { strip0x } from "../util";
+import { isHexString, strip0x } from "../../util";
+
+enum AuthorizationType {
+  TRANSFER = "transfer",
+  APPROVE = "approve",
+  INCREASE_ALLOWANCE = "increaseAllowance",
+  DECREASE_ALLOWANCE = "decreaseAllowance",
+}
+
+const VALID_AUTHORIZATION_TYPES: AuthorizationType[] = [
+  AuthorizationType.TRANSFER,
+  AuthorizationType.APPROVE,
+  AuthorizationType.INCREASE_ALLOWANCE,
+  AuthorizationType.DECREASE_ALLOWANCE,
+];
+
+function isValidAuthorizationType(v: any): v is AuthorizationType {
+  return typeof v === "string" && VALID_AUTHORIZATION_TYPES.includes(v as any);
+}
 
 export function createAuthorization(pool: Pool): Router.IMiddleware {
   return async (ctx) => {
     const reqBody = ctx.request.body;
-    const auth = isValidAuthorization(reqBody) ? reqBody : null;
+    const auth = isCreateAuthorizationBody(reqBody) ? reqBody : null;
 
     if (!auth) {
       ctx.status = 400;
@@ -50,4 +67,33 @@ export function createAuthorization(pool: Pool): Router.IMiddleware {
     ctx.status = 202;
     ctx.body = { status: "submitted_for_processing", id };
   };
+}
+
+interface CreateAuthorizationBody {
+  type: string;
+  address1: string;
+  address2: string;
+  value: string;
+  valid_after: string;
+  valid_before: string;
+  nonce: string;
+  v: string;
+  r: string;
+  s: string;
+}
+
+function isCreateAuthorizationBody(o: any): o is CreateAuthorizationBody {
+  return (
+    typeof o === "object" &&
+    isValidAuthorizationType(o.type) &&
+    isHexString(o.address1, 40) &&
+    isHexString(o.address2, 40) &&
+    isHexString(o.value) &&
+    isHexString(o.valid_after) &&
+    isHexString(o.valid_before) &&
+    isHexString(o.nonce) &&
+    isHexString(o.v) &&
+    isHexString(o.r) &&
+    isHexString(o.s)
+  );
 }

@@ -1,6 +1,6 @@
 import Router from "koa-router";
 import { Pool } from "pg";
-import { prepend0x } from "../util";
+import { prepend0x } from "../../util";
 
 export function showAuthorization(pool: Pool): Router.IMiddleware {
   return async (ctx) => {
