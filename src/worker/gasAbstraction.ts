@@ -10,43 +10,27 @@ const { abi } = web3.eth;
 export const TRANSFER_WITH_AUTHORIZATION_TYPEHASH = keccak256(
   "TransferWithAuthorization(address from,address to,uint256 value,uint256 validAfter,uint256 validBefore,bytes32 nonce)"
 );
-export const APPROVE_WITH_AUTHORIZATION_TYPEHASH = keccak256(
-  "ApproveWithAuthorization(address owner,address spender,uint256 value,uint256 validAfter,uint256 validBefore,bytes32 nonce)"
+export const BURN_WITH_AUTHORIZATION_TYPEHASH = keccak256(
+  "BurnWithAuthorization(address owner,uint256 value,uint256 validAfter,uint256 validBefore,bytes32 nonce)"
 );
-export const INCREASE_ALLOWANCE_WITH_AUTHORIZATION_TYPEHASH = keccak256(
-  "IncreaseAllowanceWithAuthorization(address owner,address spender,uint256 increment,uint256 validAfter,uint256 validBefore,bytes32 nonce)"
-);
-export const DECREASE_ALLOWANCE_WITH_AUTHORIZATION_TYPEHASH = keccak256(
-  "DecreaseAllowanceWithAuthorization(address owner,address spender,uint256 decrement,uint256 validAfter,uint256 validBefore,bytes32 nonce)"
-);
-// export const CANCEL_AUTHORIZATION_TYPEHASH = keccak256(
-//   "CancelAuthorization(address authorizer,bytes32 nonce)"
-// );
-// export const PERMIT_TYPEHASH = keccak256(
-//   "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"
-// );
 
 export const TRANSFER_WITH_AUTHORIZATION_SELECTOR = abi.encodeFunctionSignature(
   "transferWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32)"
 );
-export const APPROVE_WITH_AUTHORIZATION_SELECTOR = abi.encodeFunctionSignature(
-  "approveWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32)"
+export const BURN_WITH_AUTHORIZATION_SELECTOR = abi.encodeFunctionSignature(
+  "burnWithAuthorization(address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32)"
 );
-export const INCREASE_ALLOWANCE_WITH_AUTHORIZATION_SELECTOR = abi.encodeFunctionSignature(
-  "increaseAllowanceWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32)"
-);
-export const DECREASE_ALLOWANCE_WITH_AUTHORIZATION_SELECTOR = abi.encodeFunctionSignature(
-  "decreaseAllowanceWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32)"
-);
-// export const CANCEL_AUTHORIZATION_SELECTOR = abi.encodeFunctionSignature(
-//   "cancelAuthorization(address,bytes32,uint8,bytes32,bytes32)"
-// );
-// export const PERMIT_SELECTOR = abi.encodeFunctionSignature(
-//   "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)"
-// );
 
 const AUTHORIZATION_PARAM_TYPES = [
   "address",
+  "address",
+  "uint256",
+  "uint256",
+  "uint256",
+  "bytes32",
+];
+
+const BURN_AUTHORIZATION_PARAM_TYPES = [
   "address",
   "uint256",
   "uint256",
@@ -84,6 +68,15 @@ export function hashAuthorization(
   nonce: string,
   domainSeparator: string
 ): string {
+  if (typeHash === BURN_WITH_AUTHORIZATION_TYPEHASH) {
+    return eip712Hash(
+      domainSeparator,
+      typeHash,
+      BURN_AUTHORIZATION_PARAM_TYPES,
+      [address1, value, validAfter, validBefore, nonce]
+    );
+  }
+
   return eip712Hash(domainSeparator, typeHash, AUTHORIZATION_PARAM_TYPES, [
     address1,
     address2,
@@ -133,25 +126,33 @@ export function encodeTxData(
   if (typeof v === "number") {
     v = v.toString(16);
   }
-  return (
-    prepend0x(selector) +
-    strip0x(
-      abi.encodeParameters(
-        [...AUTHORIZATION_PARAM_TYPES, "uint8", "bytes32", "bytes32"],
-        [
-          address1,
-          address2,
-          value,
-          validAfter,
-          validBefore,
-          nonce,
-          v,
-          r,
-          s,
-        ].map((v) => prepend0x(v))
+  let argData: string;
+
+  if (selector === BURN_WITH_AUTHORIZATION_SELECTOR) {
+    argData = abi.encodeParameters(
+      [...BURN_AUTHORIZATION_PARAM_TYPES, "uint8", "bytes32", "bytes32"],
+      [address1, value, validAfter, validBefore, nonce, v, r, s].map((v) =>
+        prepend0x(v)
       )
-    )
-  );
+    );
+  } else {
+    argData = abi.encodeParameters(
+      [...AUTHORIZATION_PARAM_TYPES, "uint8", "bytes32", "bytes32"],
+      [
+        address1,
+        address2,
+        value,
+        validAfter,
+        validBefore,
+        nonce,
+        v,
+        r,
+        s,
+      ].map((v) => prepend0x(v))
+    );
+  }
+
+  return prepend0x(selector) + strip0x(argData);
 }
 
 export function getTypeHashAndSelector(
@@ -163,20 +164,10 @@ export function getTypeHashAndSelector(
         TRANSFER_WITH_AUTHORIZATION_TYPEHASH,
         TRANSFER_WITH_AUTHORIZATION_SELECTOR,
       ];
-    case "approve":
+    case "burn":
       return [
-        APPROVE_WITH_AUTHORIZATION_TYPEHASH,
-        APPROVE_WITH_AUTHORIZATION_SELECTOR,
-      ];
-    case "increase_allowance":
-      return [
-        INCREASE_ALLOWANCE_WITH_AUTHORIZATION_TYPEHASH,
-        INCREASE_ALLOWANCE_WITH_AUTHORIZATION_SELECTOR,
-      ];
-    case "decrease_allowance":
-      return [
-        DECREASE_ALLOWANCE_WITH_AUTHORIZATION_TYPEHASH,
-        DECREASE_ALLOWANCE_WITH_AUTHORIZATION_SELECTOR,
+        BURN_WITH_AUTHORIZATION_TYPEHASH,
+        BURN_WITH_AUTHORIZATION_SELECTOR,
       ];
   }
   return null;

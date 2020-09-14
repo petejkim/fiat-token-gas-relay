@@ -4,16 +4,12 @@ import { isHexString, strip0x } from "../../util";
 
 enum AuthorizationType {
   TRANSFER = "transfer",
-  APPROVE = "approve",
-  INCREASE_ALLOWANCE = "increaseAllowance",
-  DECREASE_ALLOWANCE = "decreaseAllowance",
+  BURN = "burn",
 }
 
 const VALID_AUTHORIZATION_TYPES: AuthorizationType[] = [
   AuthorizationType.TRANSFER,
-  AuthorizationType.APPROVE,
-  AuthorizationType.INCREASE_ALLOWANCE,
-  AuthorizationType.DECREASE_ALLOWANCE,
+  AuthorizationType.BURN,
 ];
 
 function isValidAuthorizationType(v: any): v is AuthorizationType {
@@ -24,17 +20,14 @@ export function createAuthorization(pool: Pool): Router.IMiddleware {
   return async (ctx) => {
     const reqBody = ctx.request.body;
     const auth = isCreateAuthorizationBody(reqBody) ? reqBody : null;
-
     if (!auth) {
       ctx.status = 400;
       ctx.body = { error: "invalid_authorization" };
       return;
     }
 
-    if (auth.type !== AuthorizationType.TRANSFER) {
-      ctx.status = 400;
-      ctx.body = { error: "unsupported_authorization_type" };
-      return;
+    if (auth.type === AuthorizationType.BURN) {
+      auth.address2 = "0000000000000000000000000000000000000000";
     }
 
     let id: number;

@@ -4,7 +4,8 @@ CREATE TYPE authorization_type AS ENUM (
   'transfer',
   'approve',
   'increase_allowance',
-  'decrease_allowance'
+  'decrease_allowance',
+  'burn'
 );
 
 CREATE TABLE authorizations (
