@@ -1,9 +1,11 @@
+import cors from "@koa/cors";
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
 import ratelimit from "koa-ratelimit";
 import Router from "koa-router";
 import { Pool } from "pg";
-import { DATABASE_URL, PORT } from "../config";
+import url from "url";
+import { CORS_ALLOWED_ORIGIN, DATABASE_URL, PORT } from "../config";
 import { createAuthorization } from "./handlers/createAuthorization";
 import { showAuthorization } from "./handlers/showAuthorization";
 
@@ -15,6 +17,22 @@ pool.on("error", (err, _client) => {
   console.error("pg pool error:", err);
   process.exit(1);
 });
+
+app.use(
+  cors({
+    origin: (ctx) => {
+      const origin = ctx.request.get("Origin");
+      if (CORS_ALLOWED_ORIGIN === "*") {
+        return origin;
+      }
+      const { host } = url.parse(origin);
+      if (host && CORS_ALLOWED_ORIGIN.split(",").includes(host)) {
+        return origin;
+      }
+      return "";
+    },
+  })
+);
 
 app.use(
   ratelimit({
