@@ -33,7 +33,8 @@ CREATE TABLE submissions (
   raw_tx text,
   error varchar(255),
   created_at timestamptz NOT NULL DEFAULT now(),
-  confirmed_at timestamptz
+  confirmed_at timestamptz,
+  confirmed_block int
 );
 
 CREATE UNIQUE INDEX index_submissions_authorization_id ON submissions (authorization_id);

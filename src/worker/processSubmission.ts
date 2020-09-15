@@ -23,9 +23,15 @@ export async function processSubmission(
     return;
   }
 
-  if (receiptResponse.result) {
-    console.log("Submission confirmed:", prepend0x(s.tx_hash));
-    await markSubmissionAsConfirmed(db, s.id);
+  if (receiptResponse.result?.blockNumber) {
+    const blockNumber = Number.parseInt(
+      receiptResponse.result.blockNumber as string
+    );
+
+    console.log(
+      `Submission confirmed at block ${blockNumber}: ${prepend0x(s.tx_hash)}`
+    );
+    await markSubmissionAsConfirmed(db, s.id, blockNumber);
     return;
   }
 

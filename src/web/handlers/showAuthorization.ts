@@ -17,10 +17,13 @@ export function showAuthorization(pool: Pool): Router.IMiddleware {
       error: string | null;
       created_at: Date | null;
       confirmed_at: Date | null;
+      confirmed_block: number | null;
     }[];
     try {
       ({ rows } = await pool.query(
-        `SELECT a.id, s.tx_hash, s.error, s.created_at, s.confirmed_at
+        `SELECT
+          a.id, s.tx_hash, s.error, s.created_at,
+          s.confirmed_at, s.confirmed_block
           FROM authorizations a
           LEFT JOIN submissions s ON a.id = s.authorization_id
           WHERE a.id = $1`,
@@ -66,6 +69,7 @@ export function showAuthorization(pool: Pool): Router.IMiddleware {
     if (row.confirmed_at) {
       ctx.body.state = "confirmed";
       ctx.body.confirmed_at = row.confirmed_at;
+      ctx.body.confirmed_block = row.confirmed_block;
     } else {
       ctx.body.state = "submitted";
     }

@@ -44,12 +44,15 @@ export async function markSubmissionAsFailed(
 
 export async function markSubmissionAsConfirmed(
   db: Client,
-  id: number
+  id: number,
+  blockNumber: number
 ): Promise<void> {
   try {
     await db.query(
-      `UPDATE submissions SET confirmed_at = now() WHERE id = $1`,
-      [id]
+      `UPDATE submissions
+        SET confirmed_at = now(), confirmed_block = $1
+        WHERE id = $2`,
+      [blockNumber, id]
     );
   } catch (err) {
     console.error("Failed to mark as confirmed:", err);
