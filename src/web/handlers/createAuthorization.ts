@@ -5,11 +5,13 @@ import { isHexString, strip0x } from "../../util";
 enum AuthorizationType {
   TRANSFER = "transfer",
   BURN = "burn",
+  CLAIM = "claim",
 }
 
 const VALID_AUTHORIZATION_TYPES: AuthorizationType[] = [
   AuthorizationType.TRANSFER,
   AuthorizationType.BURN,
+  AuthorizationType.CLAIM,
 ];
 
 function isValidAuthorizationType(v: any): v is AuthorizationType {
@@ -26,8 +28,17 @@ export function createAuthorization(pool: Pool): Router.IMiddleware {
       return;
     }
 
+    if (!VALID_AUTHORIZATION_TYPES.includes(auth.type as AuthorizationType)) {
+      ctx.status = 400;
+      ctx.body = { error: "unsupported_authorization_type" };
+      return;
+    }
+
     if (auth.type === AuthorizationType.BURN) {
       auth.address2 = "0000000000000000000000000000000000000000";
+    } else if (auth.type === AuthorizationType.CLAIM) {
+      auth.address2 = "0000000000000000000000000000000000000000";
+      auth.value = "0";
     }
 
     let id: number;

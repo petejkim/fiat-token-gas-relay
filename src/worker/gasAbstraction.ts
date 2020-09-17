@@ -13,12 +13,18 @@ export const TRANSFER_WITH_AUTHORIZATION_TYPEHASH = keccak256(
 export const BURN_WITH_AUTHORIZATION_TYPEHASH = keccak256(
   "BurnWithAuthorization(address owner,uint256 value,uint256 validAfter,uint256 validBefore,bytes32 nonce)"
 );
+export const CLAIM_WITH_AUTHORIZATION_TYPEHASH = keccak256(
+  "ClaimWithAuthorization(address owner,uint256 validAfter,uint256 validBefore,bytes32 nonce)"
+);
 
 export const TRANSFER_WITH_AUTHORIZATION_SELECTOR = abi.encodeFunctionSignature(
   "transferWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32)"
 );
 export const BURN_WITH_AUTHORIZATION_SELECTOR = abi.encodeFunctionSignature(
   "burnWithAuthorization(address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32)"
+);
+export const CLAIM_WITH_AUTHORIZATION_SELECTOR = abi.encodeFunctionSignature(
+  "claimWithAuthorization(address,uint256,uint256,bytes32,uint8,bytes32,bytes32)"
 );
 
 const AUTHORIZATION_PARAM_TYPES = [
@@ -33,6 +39,13 @@ const AUTHORIZATION_PARAM_TYPES = [
 const BURN_AUTHORIZATION_PARAM_TYPES = [
   "address",
   "uint256",
+  "uint256",
+  "uint256",
+  "bytes32",
+];
+
+const CLAIM_AUTHORIZATION_PARAM_TYPES = [
+  "address",
   "uint256",
   "uint256",
   "bytes32",
@@ -74,6 +87,13 @@ export function hashAuthorization(
       typeHash,
       BURN_AUTHORIZATION_PARAM_TYPES,
       [address1, value, validAfter, validBefore, nonce]
+    );
+  } else if (typeHash === CLAIM_WITH_AUTHORIZATION_TYPEHASH) {
+    return eip712Hash(
+      domainSeparator,
+      typeHash,
+      CLAIM_AUTHORIZATION_PARAM_TYPES,
+      [address1, validAfter, validBefore, nonce]
     );
   }
 
@@ -135,6 +155,13 @@ export function encodeTxData(
         prepend0x(v)
       )
     );
+  } else if (selector === CLAIM_WITH_AUTHORIZATION_SELECTOR) {
+    argData = abi.encodeParameters(
+      [...CLAIM_AUTHORIZATION_PARAM_TYPES, "uint8", "bytes32", "bytes32"],
+      [address1, validAfter, validBefore, nonce, v, r, s].map((v) =>
+        prepend0x(v)
+      )
+    );
   } else {
     argData = abi.encodeParameters(
       [...AUTHORIZATION_PARAM_TYPES, "uint8", "bytes32", "bytes32"],
@@ -168,6 +195,11 @@ export function getTypeHashAndSelector(
       return [
         BURN_WITH_AUTHORIZATION_TYPEHASH,
         BURN_WITH_AUTHORIZATION_SELECTOR,
+      ];
+    case "claim":
+      return [
+        CLAIM_WITH_AUTHORIZATION_TYPEHASH,
+        CLAIM_WITH_AUTHORIZATION_SELECTOR,
       ];
   }
   return null;
